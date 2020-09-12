@@ -103,7 +103,7 @@ public class HaProxyConnector {
 
         if(response.isSuccessful()) {
             JSONObject jsonObject = new JSONObject(response.body().string());
-            if(response.body().string().contains("status")) {
+            if(jsonObject.toString().contains("status")) {
                 String status = jsonObject.getString("status");
 
                 if (status.equals("key invalid ")) {
