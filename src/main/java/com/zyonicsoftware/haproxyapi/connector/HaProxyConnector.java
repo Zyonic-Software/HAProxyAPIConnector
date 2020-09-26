@@ -80,13 +80,11 @@ public class HaProxyConnector {
         Response response = client.newCall(request).execute();
 
         if(response.isSuccessful()) {
-            if(response.body().string().contains("status")) {
-                JSONObject jsonObject = new JSONObject(response.body().string());
-                String status = jsonObject.getString("status");
+            JSONObject jsonObject = new JSONObject(response.body().string());
+            String status = jsonObject.getString("status");
 
-                if(status.equals("key invalid ")) {
-                    throw new InvalidAPIKeySuppliedException();
-                }
+            if(status.equals("key invalid ")) {
+                throw new InvalidAPIKeySuppliedException();
             }
         }
     }
@@ -102,16 +100,14 @@ public class HaProxyConnector {
         Response response = client.newCall(request).execute();
 
         if(response.isSuccessful()) {
-            JSONObject jsonObject = new JSONObject(response.body().string());
+            String responseString = response.body().string();
+            JSONObject jsonObject = new JSONObject(responseString);
             if(jsonObject.toString().contains("status")) {
-                String status = jsonObject.getString("status");
-
-                if (status.equals("key invalid ")) {
+                if (responseString.equals("key invalid ")) {
                     throw new InvalidAPIKeySuppliedException();
                 }
                 return null;
             }
-
             return jsonObject.getJSONArray("proxys");
         }
         return null;
