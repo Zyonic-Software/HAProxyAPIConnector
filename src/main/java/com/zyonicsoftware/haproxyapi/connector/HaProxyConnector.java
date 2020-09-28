@@ -10,6 +10,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HaProxyConnector {
 
@@ -89,7 +91,7 @@ public class HaProxyConnector {
         }
     }
 
-    public JSONArray getProxys() throws IOException, InvalidAPIKeySuppliedException {
+    public HashMap<String, ProxyPort> getProxys() throws IOException, InvalidAPIKeySuppliedException {
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         Request request = new Request.Builder()
@@ -108,7 +110,14 @@ public class HaProxyConnector {
                 }
                 return null;
             }
-            return jsonObject.getJSONArray("proxys");
+            JSONArray proxys = jsonObject.getJSONArray("proxys");
+            HashMap<String, ProxyPort> proxyPortHashMap = new HashMap<>();
+
+            for (int i = 0 ; i < proxys.length() ; i++) {
+                JSONObject currentJsonObject = proxys.getJSONObject(i);
+                proxyPortHashMap.put(currentJsonObject.getString("proxyName") , new ProxyPort(currentJsonObject.getInt("inputPort"), currentJsonObject.getInt("destinationPort"), currentJsonObject.getString("proxyName"), currentJsonObject.getString("proxyDestination")));
+            }
+            return proxyPortHashMap;
         }
         return null;
     }
